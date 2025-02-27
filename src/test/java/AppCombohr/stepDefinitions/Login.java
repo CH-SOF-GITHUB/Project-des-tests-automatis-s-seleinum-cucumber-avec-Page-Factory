@@ -1,5 +1,6 @@
 package AppCombohr.stepDefinitions;
 
+import AppCombohr.PageFactory.LoginPage;
 import com.aventstack.extentreports.ExtentTest;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -20,6 +21,9 @@ public class Login {
     // déclaration d'un objet extent rapports
     ExtentTest test = ExtentReportManager.getTest();
 
+    // déclaration d'une instance de PageFactory LoginPage
+    LoginPage loginPage = new LoginPage(driver);
+
     @Given("je suis sur la page de connexion de combo")
     public void je_suis_sur_la_page_de_connexion_de_combo() {
         driver.get("https://app.combohr.com/users/sign_in");
@@ -30,22 +34,20 @@ public class Login {
 
     @When("je saisie adresse email {string}")
     public void jeSaisieAdresseEmail(String email) {
-        WebElement emailField = driver.findElement(By.name("email"));
-        emailField.sendKeys(email);
+        loginPage.SaisirLogin(email);
         test.info("je saisie email: " + email);
     }
 
     @And("je saisie mot de passe {string}")
     public void jeSaisieMotDePasse(String password) {
-        WebElement passwordField = driver.findElement(By.name("password"));
-        passwordField.sendKeys(password);
+        loginPage.SaisirPassword(password);
         test.info("je saisie password: " + password);
     }
 
     @And("je clique sur le bouton Se connecter")
     public void jeCliqueSurLeBoutonSeConnecter() {
-        WebElement button = driver.findElement(By.xpath("//button[@data-testid=\"signin-submit-button\"]"));
-        button.click();
+        loginPage.clickSeConnecter();
+        test.info("je clique sur le bouton Se connecter");
     }
 
     @Then("connexion avec succès et redirection vers le tableau du board")
@@ -53,9 +55,6 @@ public class Login {
         // blocage et attendre de chargement de page
         Thread.sleep(5000);
         String url = driver.getCurrentUrl();
-        //String errorMsg = driver.findElement(By.xpath("//*[@id=\"root\"]/div/div[2]/div/div/div/form/div/div[1]/div[1]/div/div[2]")).getText();
-        //String errorMsgRequis = driver.findElement(By.xpath("//*[@id=\"root\"]/div/div[2]/div/div/div/form/div/div[1]/div[2]/div[2]/div[2]/span")).getText();
-
         if (url.equals("https://app.combohr.com/")) {
             test.pass("connexion avec succès et redirection vers le tableau du board");
         } else {
